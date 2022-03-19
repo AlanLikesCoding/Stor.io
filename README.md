@@ -1,6 +1,6 @@
 # Stor.io
 
-Stor.io is a Node.js library for storing files. It operates in a SQL-like manner, and stores its information in text files.
+Stor.io is a Node.js library for storing files. It operates in a SQL-like manner, and stores its information as table structures in text files. It has a ORM interface for inserting and extracting database and is made for lightweight webapps and PWA's because of its easy setup.
 
 ## Installation
 
