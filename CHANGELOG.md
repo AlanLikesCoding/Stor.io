@@ -1,0 +1,1 @@
+**[3/19/2022] v1.0.0** - Major release for Stor.io. Addded synchronous read and write functions, the table class with schema parsing, as well as insert and extract functions. ~ *AlanLikesCoding*

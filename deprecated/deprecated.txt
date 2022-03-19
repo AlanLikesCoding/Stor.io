@@ -1,0 +1,115 @@
+console.clear()
+const lex = (info, original, blength) => {
+  let brackets = [];
+  let bracketset = [];
+  let str = [];
+  let strset = [];
+  for (let i = 0; i < info.length; i++) {
+    if(info[i].type == 'start') {
+      brackets.push({
+        type: 'start',
+        pos: i,
+      });
+    } else if(info[i].type == 'end') {
+      brackets.push({
+        type: 'end',
+        pos: i,
+      });
+    } else if(info[i].type == 'str') {
+      str.push({
+        type: 'string',
+        pos: i,
+      });
+    }
+  }
+  let start = 0;
+  let end = brackets.length - 1;
+  while(start < end) {
+    bracketset.push({
+      start: start,
+      end: end,
+    });
+    start += 1;
+    end -= 1;
+  }
+  start = 0;
+  end = str.length - 1;
+  while(start < end) {
+    strset.push({
+      start: start,
+      end: end,
+    });
+    start += 1;
+    end -= 1;
+  }
+  
+  console.log(bracketset)
+  console.log(strset)
+  // console.log(info)
+}
+
+const parse = (content) => {
+  content = content.split("");
+  let data = [];
+  let start = 0;
+  let end = 0;
+  let str = 0;
+  for(var i = 0; i < content.length; i++) {
+    switch(content[i]) {
+      case '[':
+        start += 1;
+        data.push({
+          type: 'start',
+          pos: i,
+        });
+        break;
+      case ']':
+        end += 1;
+        data.push({
+          type: 'end',
+          pos: i,
+        });
+        break;
+      case '"':
+        str += 1;
+        data.push({
+          type: 'str',
+          pos: i,
+        });
+        break;
+      case ';':
+        data.push({
+          type: 'line',
+          pos: i,
+        });
+        break;
+      case ' ':
+        data.push({
+          type: 'space',
+          pos: i,
+        });
+        break;
+      case '%':
+        data.push({
+          type: 'int',
+          pos: i,
+        });
+        break;
+    }
+  }
+  if(start !== end || str % 2 !== 0) {
+    throw "Some random error message that you cant understand: Error Invalid EOAKSDJD-1624526 expected '{' Code: 12836293"
+  }
+  lex(data, start);
+}
+
+
+parse(`
+[Question | STR ],[ Answers | ARR ];
+["Histogram is to statistics as instruments are to ___"], ["Music", "Art", "Violin", "Melody"];
+["Apatehic is to emotional as grateful is to ___"], ["Ungracious", "Thankful", "Sad", "Happy"];
+["Amiable is to well natured as gleeful is to ___"], ["Esctatic", "Heartbroken", "Ferocious", "Annoyed"];
+["Speculative is to observant as sunlight is to"], ["Brightness", "Darkness", "Wind", "Tree"];
+["Prosaic is to mundane as pliant is to ___"], ["Stiff", "Stationary", "Static", "Noisy"];
+
+`);
