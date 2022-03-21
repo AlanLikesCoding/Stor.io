@@ -1,5 +1,6 @@
-const check = require('./helper/datatype/check.js')
-const convert = require('./helper/datatype/convert.js')
+const check = require('./helper/datatype/check.js');
+const convert = require('./helper/datatype/convert.js');
+const replace = require('./helper/file/replace.js');
 const write = require('./helper/file/write.js');
 const read  = require('./helper/file/read.js');
 class table {
@@ -53,42 +54,84 @@ class table {
         if(i !== num - 1) {
           write(name, `${value}.${coltype(i)}|`);
         } else {
-          write(name, `${value}.${coltype(i)}\n`);
+          write(name, `${value}.${coltype(i)}`);
         }
       }
     }
     return data;
   }
-  editObj() {
-    
-  }
-  filterObj() {
-    
+  editObj(obj) {
+    let data = {};
+    let name = this.name;
+    let num = this.num;
+    let cols = this.cols;
+    for(let i = 0; i < this.num; i++) {
+      data[this.cols[i].colname] = obj[this.cols[i].colname]; 
+    }
+    let extract = read(this.name).split('\n');
+  
+    data.save = function() {
+      let parsed = '';
+      for (let i = 0; i < num; i++) {
+        const coltype = cols[i].coltype;
+        const value = data[cols[i].colname];
+        if(i !== num - 1) {
+          parsed += `${value}.${coltype}|`;
+        } else {
+          parsed += `${value}.${coltype}`;
+        }
+      }
+      extract[obj.pk] = parsed.toString();
+      extract = extract.join('\n');
+      replace(name, extract);
+    }
+    return data;
   }
   new() {
     return this.newObj();
-  }
-  filter() {
-    return this.filterObj();
   }
   extract() {
     const rows = read(this.name).split('\n');
     const data = [];
     for(var i = 0; i < rows.length; i++) {
       if(rows[i] == null || rows[i].replace(' ', '').split('').length == 0) {
-        break;
+        continue;
       }
       const row = rows[i].split('|');
-      let params = {}
+      let extracted = {}
       for (let i = 0; i < this.cols.length; i++) {
         const value = row[i].split('.')[0];
         const type = row[i].split('.')[1];
         const insert = convert(value, type);
-        params[this.cols[i].colname] = insert;
+        extracted[this.cols[i].colname] = insert;
       }
-      data.push(params);
+      extracted['pk'] = i;
+      data.push(this.editObj(extracted));
     }
-    console.log(data)
+    return data;
+  }
+  filter(obj) {
+    const keys = Object.keys(obj);
+    const extracted = this.extract();
+    let data = [];
+    for(let i = 0; i < extracted.length; i++) {
+      if(keys.length > this.num) {
+        throw "error";
+      }
+      let matched = true;
+      for(let j = 0; j < keys.length; j++) {
+        if(matched == false) {
+          break;
+        } 
+        if(extracted[i][keys[j]] !== obj[keys[j]]) {
+          matched = false;
+        }
+      }
+      if(matched == true) {
+        data.push(extracted[i]);
+      }
+    }
+    return data;
   }
 }
 

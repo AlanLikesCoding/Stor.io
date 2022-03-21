@@ -1,0 +1,10 @@
+entry2.string|123.int|asd.string
+entry2.string|123.int|asd.string
+entry2.string|123.int|asd.string
+edited.string|123.int|asd.string
+edited.string|123.int|asd.string
+edited.string|123.int|asd.string
+edited.string|123.int|asd.string
+edited.string|123.int|asd.string
+edited.string|123.int|asd.string
+entry2.string|123.int|asd.string
